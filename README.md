@@ -66,4 +66,44 @@ The project focuses on **backend correctness, scalability, and clean code**, rat
 ---
 
 ## 📂 Project Structure
+src/
+├── modules/
+│ ├── auth/
+│ │ ├── auth.controller.ts
+│ │ ├── auth.service.ts
+│ │ └── guards/
+│ ├── users/
+│ │ ├── entities/
+│ │ ├── dtos/
+│ │ ├── users.controller.ts
+│ │ └── users.service.ts
+│ ├── courses/
+│ │ ├── entities/
+│ │ ├── dtos/
+│ │ ├── courses.controller.ts
+│ │ └── courses.service.ts
+│ ├── lessons/
+│ │ ├── entities/
+│ │ ├── dtos/
+│ │ ├── lessons.controller.ts
+│ │ └── lessons.service.ts
+│ └── utils/
+│ └── enum/
+├── app.module.ts
+└── main.ts
 
+
+Each module contains:
+- Controller
+- Service
+- Entity
+- DTOs
+
+---
+
+## 🔑 Roles & Permissions
+
+```ts
+ADMIN
+INSTRUCTOR
+STUDENT
