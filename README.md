@@ -66,7 +66,7 @@ The project focuses on **backend correctness, scalability, and clean code**, rat
 ---
 
 ## 📂 Project Structure
-src/
+src/ 
 ├── modules/
 │ ├── auth/
 │ │ ├── auth.controller.ts

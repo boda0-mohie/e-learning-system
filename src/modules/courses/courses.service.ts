@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Course } from './entities/course.entity';
@@ -8,6 +8,7 @@ import { User } from '../users/entities/user.entity';
 import { Role } from 'utils/enum';
 import { CreateLessonDto } from './dtos/create-lesson.dto';
 import { LessonsService } from './lesseons.service';
+import { UpdateCourseDto } from './dtos/update-course.dto';
 
 @Injectable()
 export class CoursesService {
@@ -47,8 +48,8 @@ export class CoursesService {
     return this.coursesRepository.save(newCourse);
   }
 
-  public async addLessonToCourse( lessonDto: CreateLessonDto) {
-    return this.lessonsService.addLesson(lessonDto);
+  public async addLessonToCourse( lessonDto: CreateLessonDto, creatorId: number) {
+    return this.lessonsService.addLesson(lessonDto, creatorId);
   }
 
   /**
@@ -75,4 +76,38 @@ export class CoursesService {
     return course;
   }
 
+  public async getSinglelessoninCourse(courseId: number, lessonId: number): Promise<Lesson[]> {
+    return this.lessonsService.getlessoninCourse(courseId, lessonId);
+  }
+
+  /**
+   * Update course information
+   * @param updateCourseDto data to update course
+   * @returns updated course
+   */
+  public async updateCourse( updateCourseDto: UpdateCourseDto): Promise<Course> {
+    const { courseId, ...updateData } = updateCourseDto;
+    const course = await this.coursesRepository.findOneBy({ id: courseId });
+    if (!course) {
+      throw new Error('Course not found');
+    }
+    Object.assign(course, updateData);
+    return this.coursesRepository.save(course);
+  }
+
+  /**
+   * Delete a course
+   * @param courseId id of course 
+   * @returns message 
+   */
+  public async deleteCourse(courseId: number) {
+    const course = await this.coursesRepository.findOneBy({ id: courseId });
+    if (!course) {
+      throw new Error('Course not found');
+    }
+    await this.coursesRepository.remove(course);
+    return {
+      message: 'Course deleted successfully',
+    }
+  }
 }

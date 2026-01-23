@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Course } from './entities/course.entity';
@@ -23,11 +23,11 @@ export class LessonsService {
    * @param lessonDto data to create lesseon
    * @returns new lesson added to course
    */
-  public async addLesson(lessonDto: CreateLessonDto) {
-    const { courseId, title, content, videoUrl, duration, creatorId } = lessonDto;
+  public async addLesson(lessonDto: CreateLessonDto, creatorId: number) {
+    const { courseId, title, content, videoUrl, duration } = lessonDto;
     const creator = await this.usersRepository.findOneBy({ id: creatorId });
 
-    if (!creator || creator.role !== Role.INSTRUCTOR) {
+    if (!creator || (creator.role !== Role.INSTRUCTOR && creator.role !== Role.ADMIN)) {
       throw new Error('Creator not found or not an instructor');
     }
 
@@ -51,7 +51,7 @@ export class LessonsService {
       lessonOrder: lessonsCount + 1,
       course: course,
     });
-    
+
     await this.lessonsRepository.save(lesson);
     await this.coursesRepository.save(course);
     return {
@@ -71,5 +71,25 @@ export class LessonsService {
       where: { course: { id: courseId } },
       order: { lessonOrder: 'ASC' },
     })
+  }
+
+  /**
+   * Get lesson in course by lesson id and course id
+   * @param courseId id of course
+   * @param lessonId id of lesson
+   * @returns lesson in course
+   */
+  public async getlessoninCourse(courseId: number, lessonId: number): Promise<Lesson[]> {
+    const course = await this.coursesRepository.findOneBy({ id: courseId });
+    if (!course) {
+      throw new NotFoundException('Course not found');
+    }
+    const lesson = await this.lessonsRepository.find({
+      where: { course: { id: courseId, }, id: lessonId },
+    });
+    if (!lesson || lesson.length === 0) {
+      throw new NotFoundException('Lesson not found in this course');
+    }
+    return lesson;
   }
 }
