@@ -6,6 +6,7 @@ import { Lesson } from './entities/lesson.entity';
 import { User } from '../users/entities/user.entity';
 import { Role } from 'utils/enum';
 import { CreateLessonDto } from './dtos/create-lesson.dto';
+import { UpdateLessonDto } from './dtos/update-lesson.dto';
 
 @Injectable()
 export class LessonsService {
@@ -90,6 +91,39 @@ export class LessonsService {
     if (!lesson || lesson.length === 0) {
       throw new NotFoundException('Lesson not found in this course');
     }
+    return lesson;
+  }
+
+  /**
+   * Update lesson by lesson id
+   * @param updateLessonDto data to update lesson
+   * @returns updated lesson
+   */
+  public async updateLesson(updateLessonDto: UpdateLessonDto) {
+    const { lessonId, title, content, videoUrl, duration } = updateLessonDto;
+    const lesson = await this.lessonsRepository.findOneBy({ id: lessonId });
+    if (!lesson) {
+      throw new NotFoundException('Lesson not found');
+    }
+    lesson.title = title ?? lesson.title;
+    lesson.content = content ?? lesson.content;
+    lesson.videoUrl = videoUrl ?? lesson.videoUrl;
+    lesson.duration = duration ?? lesson.duration;
+    await this.lessonsRepository.save(lesson);
+    return lesson;
+  }
+
+  /**
+   * Delete lesson by lesson id
+   * @param lessonId id of lesson
+   * @returns deleted lesson
+   */
+  public async deleteLesson(lessonId: number) {
+    const lesson = await this.lessonsRepository.findOneBy({ id: lessonId });
+    if (!lesson) {
+      throw new NotFoundException('Lesson not found');
+    }
+    await this.lessonsRepository.remove(lesson);
     return lesson;
   }
 }

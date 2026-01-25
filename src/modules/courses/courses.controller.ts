@@ -11,6 +11,7 @@ import { LessonsService } from './lesseons.service';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
 import * as types from 'utils/types'
 import { UpdateCourseDto } from './dtos/update-course.dto';
+import { UpdateLessonDto } from './dtos/update-lesson.dto';
 
 @Controller('api/courses')
 export class CoursesController {
@@ -73,7 +74,7 @@ export class CoursesController {
     return this.lessonsService.getLessonsByCourseId(courseId);
   }
 
-  // PUT ~/api/courses/:courseId
+  // PUT ~/api/courses/admin/update-course
   @Put('admin/update-course')
   @UseGuards(AuthGuard)
   @Roles(Role.ADMIN)
@@ -83,6 +84,17 @@ export class CoursesController {
     return this.coursesService.updateCourse(updateCourseDto)
   }
 
+  // PUT ~/api/courses/admin/update-lesson
+  @Put('admin/update-lesson')
+  @Put('instructor/update-lesson')
+  @UseGuards(AuthGuard)
+  @Roles(Role.ADMIN, Role.INSTRUCTOR)
+  async updateLesson(
+    @Body() updateLessonDto: UpdateLessonDto,
+  ): Promise<Lesson> {
+    return this.lessonsService.updateLesson(updateLessonDto)
+  }
+
   @Delete('admin/delete-course/:courseId')
   @UseGuards(AuthGuard)
   @Roles(Role.ADMIN)
@@ -90,5 +102,16 @@ export class CoursesController {
     @Param('courseId') courseId: number,
   ) {
     return this.coursesService.deleteCourse(courseId);
+  }
+  
+  // DELETE ~/api/courses/admin/delete-lesson/:lessonId
+  @Delete('admin/delete-lesson/:lessonId')
+  @Delete('instructor/delete-lesson/:lessonId')
+  @UseGuards(AuthGuard)
+  @Roles(Role.ADMIN, Role.INSTRUCTOR)
+  async deleteLesson(
+    @Param('lessonId') lessonId: number,
+  ) {
+    return this.lessonsService.deleteLesson(lessonId);
   }
 }

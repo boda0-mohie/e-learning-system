@@ -20,7 +20,7 @@ export class CoursesService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private lessonsService: LessonsService,
-  ) {}
+  ) { }
 
   /**
    * Create a new course
@@ -48,7 +48,7 @@ export class CoursesService {
     return this.coursesRepository.save(newCourse);
   }
 
-  public async addLessonToCourse( lessonDto: CreateLessonDto, creatorId: number) {
+  public async addLessonToCourse(lessonDto: CreateLessonDto, creatorId: number) {
     return this.lessonsService.addLesson(lessonDto, creatorId);
   }
 
@@ -85,7 +85,7 @@ export class CoursesService {
    * @param updateCourseDto data to update course
    * @returns updated course
    */
-  public async updateCourse( updateCourseDto: UpdateCourseDto): Promise<Course> {
+  public async updateCourse(updateCourseDto: UpdateCourseDto): Promise<Course> {
     const { courseId, ...updateData } = updateCourseDto;
     const course = await this.coursesRepository.findOneBy({ id: courseId });
     if (!course) {
@@ -110,4 +110,5 @@ export class CoursesService {
       message: 'Course deleted successfully',
     }
   }
+
 }
