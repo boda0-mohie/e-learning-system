@@ -6,11 +6,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/database.config';
 import { UsersModule } from './modules/users/users.module';
 import { CoursesModule } from './modules/courses/courses.module';
+import { StudentProfileModule } from './modules/profiles/studentProfile/studentProfile.module';
 
 @Module({
   imports: [
     UsersModule,
     CoursesModule,
+    StudentProfileModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
