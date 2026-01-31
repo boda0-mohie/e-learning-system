@@ -22,3 +22,9 @@ export enum Term {
     FIRST = 1,
     SECOND = 2
 }
+
+export enum EnrollmentStatus {
+    ACTIVE = 'active',
+    DROPPED = 'dropped',
+    COMPLETED = 'completed',
+}

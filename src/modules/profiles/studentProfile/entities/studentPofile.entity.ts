@@ -1,5 +1,6 @@
+import { Enrollment } from 'src/modules/enrollments/entities/enrollment.entity';
 import { User } from 'src/modules/users/entities/user.entity';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 import { AcademicYear, Major, Term } from 'utils/enum';
 
 @Entity('student_profiles')
@@ -44,4 +45,7 @@ export class StudentProfile {
         nullable: true,
     })
     photo: string;
+
+    @OneToMany(() => Enrollment, enrollment => enrollment.profile)
+    enrollments: Enrollment[];
 }

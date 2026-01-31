@@ -1,8 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne } from 'typeorm';
 import { Lesson } from '../../courses/entities/lesson.entity';
 import { AcademicYear, Major, Term } from 'utils/enum';
-import { User } from 'src/modules/users/entities/user.entity';
-// import { Enrollment } from '../../enrollments/entities/enrollment.entity';
+import { Enrollment } from 'src/modules/enrollments/entities/enrollment.entity';
 
 @Entity('courses')
 export class Course {
@@ -48,6 +47,6 @@ export class Course {
   @OneToMany(() => Lesson, lesson => lesson.course, { cascade: true })
   lessons: Lesson[];
 
-  // @OneToMany(() => Enrollment, enrollment => enrollment.course)
-  // enrollments: Enrollment[];
+  @OneToMany(() => Enrollment, enrollment => enrollment.course)
+  enrollments: Enrollment[];
 }

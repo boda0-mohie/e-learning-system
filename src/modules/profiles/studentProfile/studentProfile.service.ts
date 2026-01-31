@@ -4,9 +4,13 @@ import { Repository } from "typeorm";
 import { CreateStudentProfileDto } from "./dtos/create-studentProfile.dto";
 import { Role } from "utils/enum";
 import { User } from "src/modules/users/entities/user.entity";
-import { NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { Course } from "src/modules/courses/entities/course.entity";
+import { Enrollment } from "src/modules/enrollments/entities/enrollment.entity";
+import { CoursesService } from "src/modules/courses/courses.service";
+import { EnrollmentService } from "src/modules/enrollments/enrollments.service";
 
-
+@Injectable()
 export class StudentProfileService {
     constructor(
         @InjectRepository(StudentProfile)
@@ -43,18 +47,25 @@ export class StudentProfileService {
      * @param userId user id
      * @returns student profile
      */
-    public async getStudentProfile(userId: number): Promise<StudentProfile> {
+    public async getStudentProfile(userId: number) {
         const user = await this.userRepository.findOneBy({ id: userId });
         if (!user || user.role !== Role.STUDENT) {
             throw new NotFoundException('User not found');
         }
-        const profile = await this.studentProfileRepository.findOneBy({ id: user.id });
+        const profile = await this.studentProfileRepository.findOne({
+            where: { id: user.id },
+            relations: ['enrollments'],
+        });
         if (!profile) {
             throw new NotFoundException('Profile not found');
         }
+        // const enrollments = await this.getEnrollments(profile.id);
+        // console.log(enrollments);
         return {
             ...profile,
-            user,
+            // enrollments,
         };
     }
+
+    
 }

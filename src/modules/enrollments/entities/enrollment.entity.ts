@@ -1,18 +1,40 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
-import { User } from '../../users/entities/user.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Column,
+  CreateDateColumn,
+  JoinColumn,
+} from 'typeorm';
+import { StudentProfile } from '../../profiles/studentProfile/entities/studentPofile.entity';
 import { Course } from '../../courses/entities/course.entity';
+import { EnrollmentStatus } from 'utils/enum';
 
-@Entity()
+@Entity('enrollments')
 export class Enrollment {
+
   @PrimaryGeneratedColumn()
   id: number;
 
-  // @ManyToOne(() => User, user => user.enrollments)
-  // user: User;
+  @ManyToOne(() => StudentProfile, student => student.enrollments, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'student_id' })
+  profile: StudentProfile| number;
 
-  // @ManyToOne(() => Course, course => course.enrollments)
-  // course: Course;
+  @ManyToOne(() => Course, course => course.enrollments, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'course_id' })
+  course: Course| number;
 
-  @Column({ default: false })
-  completed: boolean;
+  @Column({
+    type: 'enum',
+    enum: EnrollmentStatus,
+    default: EnrollmentStatus.ACTIVE,
+  })
+  status: EnrollmentStatus;
+
+  @CreateDateColumn({ name: 'enrolled_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  enrolledAt: Date;
 }
