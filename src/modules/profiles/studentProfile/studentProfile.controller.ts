@@ -33,7 +33,7 @@ export class StudentProfileController {
     @UseGuards(AuthGuard)
     public async getStudentProfile(
         @CurrentUser() payload: types.JWTPayloadType,
-    ) {
+    ): Promise<StudentProfile> {
         return this.studentProfileService.getStudentProfile(payload.id);
     }
 }

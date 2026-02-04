@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne } from 'typ
 import { Lesson } from '../../courses/entities/lesson.entity';
 import { AcademicYear, Major, Term } from 'utils/enum';
 import { Enrollment } from 'src/modules/enrollments/entities/enrollment.entity';
+import { Assignment } from './assignment.entity';
 
 @Entity('courses')
 export class Course {
@@ -49,4 +50,7 @@ export class Course {
 
   @OneToMany(() => Enrollment, enrollment => enrollment.course)
   enrollments: Enrollment[];
+
+  @OneToMany(() => Assignment, assignment => assignment.course)
+  assignments: Assignment[];
 }

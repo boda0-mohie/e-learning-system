@@ -12,12 +12,15 @@ import { CurrentUser } from '../users/decorators/current-user.decorator';
 import * as types from 'utils/types'
 import { UpdateCourseDto } from './dtos/update-course.dto';
 import { UpdateLessonDto } from './dtos/update-lesson.dto';
+import { CreateAssignmentDto } from './dtos/create-assignment.dto';
+import { AssignmentsService } from './assignmets.service';
 
 @Controller('api/courses')
 export class CoursesController {
   constructor(
     private readonly coursesService: CoursesService,
     private readonly lessonsService: LessonsService,
+    private readonly assignmentsService: AssignmentsService,
   ) {}
 
   // POST ~/api/courses/admin/create-course
@@ -105,6 +108,7 @@ export class CoursesController {
   }
   
   // DELETE ~/api/courses/admin/delete-lesson/:lessonId
+  // DELETE ~/api/courses/instructor/delete-lesson/:lessonId
   @Delete('admin/delete-lesson/:lessonId')
   @Delete('instructor/delete-lesson/:lessonId')
   @UseGuards(AuthGuard)
@@ -113,5 +117,18 @@ export class CoursesController {
     @Param('lessonId') lessonId: number,
   ) {
     return this.lessonsService.deleteLesson(lessonId);
+  }
+
+  // POST ~/api/courses/admin/add-assignment
+  // POST ~/api/courses/instructor/add-assignment
+  @Post('admin/add-assignment')
+  @Post('instructor/add-assignment')
+  @UseGuards(AuthGuard)
+  @Roles(Role.ADMIN, Role.INSTRUCTOR)
+  async addAssignmentToCourse(
+    @Body() assignmentDto: CreateAssignmentDto,
+    @CurrentUser() payload: types.JWTPayloadType,
+  ) {
+    return this.assignmentsService.addAssignmentToCourse(assignmentDto, payload.id);
   }
 }
