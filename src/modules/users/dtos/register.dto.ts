@@ -7,7 +7,6 @@ export class RegisterDto {
     email: string;
 
     @MinLength(3)
-    @IsOptional()
     @IsNotEmpty()
     username: string;
 
