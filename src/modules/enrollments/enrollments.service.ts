@@ -17,6 +17,12 @@ export class EnrollmentService {
     private readonly studentProfileService: StudentProfileService,
   ) { }
 
+  /**
+   * Enroll Student in a Course
+   * @param courseId Id of the course
+   * @param profilId Id of the student profile
+   * @returns Enrollment
+   */
   public async enrollStudent(courseId: number, profilId: number): Promise<Enrollment> {
     const course = await this.coursesService.getCourseById(courseId);
     const studentProfile = await this.studentProfileService.getStudentProfile(profilId);
@@ -43,5 +49,22 @@ export class EnrollmentService {
       profile: studentProfile,
     });
     return this.enrollmentRepository.save(enrollment);
+  }
+
+  /**
+   * Get My Enrollments
+   * @param profileId Id of the student profile
+   * @returns List of enrollments
+   */
+  public async getMyEnrollments(profileId: number): Promise<Enrollment[]> {
+    const enrollments = await this.enrollmentRepository.find({
+      where: {
+        profile: { id: profileId },
+      },
+    });
+    if (!enrollments) {
+      throw new NotFoundException('No enrollments found');
+    }
+    return enrollments;
   }
 }

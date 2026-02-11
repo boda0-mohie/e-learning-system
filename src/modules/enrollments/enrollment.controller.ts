@@ -1,4 +1,4 @@
-import { Controller, Param, Post, UseGuards } from "@nestjs/common";
+import { Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 import { EnrollmentService } from "./enrollments.service";
 import { Enrollment } from "./entities/enrollment.entity";
 import { CurrentUser } from "../users/decorators/current-user.decorator";
@@ -22,5 +22,14 @@ export class EnrollmentController {
         @Param('courseId') courseId: number,
     ): Promise<Enrollment> {
         return this.enrollmentService.enrollStudent(courseId, payload.id);
+    }
+
+    @Get('/')
+    @UseGuards(AuthGuard)
+    @Roles(Role.STUDENT)
+    public async getMyEnrollments(
+        @CurrentUser() payload:types.JWTPayloadType,
+    ): Promise<Enrollment[]> {
+        return this.enrollmentService.getMyEnrollments(payload.id);
     }
 }

@@ -6,7 +6,7 @@ This project is designed to manage users, courses, enrollments, and student prof
 
 ---
 
-## 📌 Overview
+## Overview
 
 The E-Learning System provides a robust backend foundation for an online learning platform where:
 
@@ -19,37 +19,37 @@ The project focuses on **backend correctness, scalability, and clean code**.
 
 ---
 
-## 🚀 Features
+## Features
 
-### 🔐 Authentication & Authorization
+### Authentication & Authorization
 - **JWT-based authentication** for secure access.
 - **Role-Based Access Control (RBAC)** ensuring users only access what they are permitted to.
 - Guards for protecting sensitive endpoints.
 
-### 👤 User Management
+### User Management
 - distinct roles: **Admin**, **Instructor**, **Student**.
 - Secure password hashing (typically using bcrypt).
 
-### 📚 Course Management
+### Course Management
 - **Courses**: Create, update, delete, and view courses.
 - **Lessons**: structured content within courses.
 - **Dynamic Ordering**: Lessons can be ordered and reordered within a course.
 
-### 📝 Enrollments
+### Enrollments
 - Students can enroll in available courses.
 - Tracking of enrollment status.
 
-### 🎓 Student Profiles
+### Student Profiles
 - Dedicated profiles for students to manage their personal information and progress.
 
-### 🧱 Architecture
+### Architecture
 - **Modular NestJS structure**: Separation of concerns into specific modules.
 - **DTOs**: Data Transfer Objects for robust request validation.
 - **TypeORM**: specific entities and relationships (One-to-Many, Many-to-One).
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Runtime**: Node.js
 - **Framework**: NestJS
@@ -61,7 +61,7 @@ The project focuses on **backend correctness, scalability, and clean code**.
 
 ---
 
-## ⚙️ Environment Setup
+## Environment Setup
 
 Create a `.env` file in the root directory with the following variables:
 
@@ -110,7 +110,7 @@ JWT_SECRET=your_super_secret_key
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```bash
 src/
@@ -132,7 +132,7 @@ Each module typically contains:
 
 ---
 
-## 🔑 Roles
+## Roles
 
 The system is designed with specific permissions for:
 - **ADMIN**: Full system access.

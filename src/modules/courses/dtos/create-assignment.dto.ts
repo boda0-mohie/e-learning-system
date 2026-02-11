@@ -14,4 +14,7 @@ export class CreateAssignmentDto {
     @IsNumber()
     @IsNotEmpty()
     courseId: number;
+    @IsString()
+    @IsNotEmpty()
+    submitionLink: string;
 }

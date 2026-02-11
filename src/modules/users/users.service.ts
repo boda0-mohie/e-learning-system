@@ -7,7 +7,6 @@ import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dtos/login.dto';
 import { JWTPayloadType } from 'utils/types';
 import { JwtService } from '@nestjs/jwt';
-import { Role } from 'utils/enum';
 import { UpdateRoleDto } from './dtos/update-role.dto';
 
 @Injectable()

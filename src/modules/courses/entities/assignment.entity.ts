@@ -19,6 +19,9 @@ export class Assignment {
     @JoinColumn({ name: 'course_id' })
     course: Course;
 
+    @Column({ nullable: true })
+    submitionLink: string;
+
     @Column({ type: 'int' })
     course_id: number;
 
