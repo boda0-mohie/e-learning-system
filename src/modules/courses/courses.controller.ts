@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Patch,
+  Delete,
+  UseGuards,
+  Put,
+} from '@nestjs/common';
 import { CoursesService } from './courses.service';
 import { Course } from './entities/course.entity';
 import { Lesson } from './entities/lesson.entity';
@@ -9,11 +19,12 @@ import { CreateCourseDto } from './dtos/create-course.dto';
 import { CreateLessonDto } from './dtos/create-lesson.dto';
 import { LessonsService } from './lesseons.service';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
-import * as types from 'utils/types'
+import * as types from 'utils/types';
 import { UpdateCourseDto } from './dtos/update-course.dto';
 import { UpdateLessonDto } from './dtos/update-lesson.dto';
 import { CreateAssignmentDto } from './dtos/create-assignment.dto';
 import { AssignmentsService } from './assignmets.service';
+import { ApiSecurity } from '@nestjs/swagger';
 
 @Controller('api/courses')
 export class CoursesController {
@@ -27,9 +38,10 @@ export class CoursesController {
   @Post('admin/create-course')
   @UseGuards(AuthGuard)
   @Roles(Role.ADMIN)
+  @ApiSecurity('bearer')
   async createCourse(
     @CurrentUser() payload: types.JWTPayloadType,
-    @Body() courseDto: CreateCourseDto, 
+    @Body() courseDto: CreateCourseDto,
   ): Promise<Course> {
     return this.coursesService.createCourse(courseDto, payload.id);
   }
@@ -40,13 +52,15 @@ export class CoursesController {
   @Post('instructor/add-lesson')
   @UseGuards(AuthGuard)
   @Roles(Role.INSTRUCTOR, Role.ADMIN)
+  @ApiSecurity('bearer')
   async addLessonToCourse(
     @CurrentUser() payload: types.JWTPayloadType,
-    @Body() lessonDto: CreateLessonDto, ) {
+    @Body() lessonDto: CreateLessonDto,
+  ) {
     return this.coursesService.addLessonToCourse(lessonDto, payload.id);
   }
 
-  // GET ~/api/courses  
+  // GET ~/api/courses
   @Get()
   async getAllCourses(): Promise<Course[]> {
     return this.coursesService.getAllCourses();
@@ -54,9 +68,7 @@ export class CoursesController {
 
   // GET ~/api/courses/:courseId
   @Get(':courseId')
-  async getCourse(
-    @Param('courseId') courseId: number
-  ): Promise<Course> {
+  async getCourse(@Param('courseId') courseId: number): Promise<Course> {
     return this.coursesService.getCourseById(courseId);
   }
 
@@ -72,7 +84,7 @@ export class CoursesController {
   // GET ~/api/courses/:courseId/lessons
   @Get(':courseId/lessons')
   async getLessonsInCourse(
-    @Param('courseId') courseId: number
+    @Param('courseId') courseId: number,
   ): Promise<Lesson[]> {
     return this.lessonsService.getLessonsByCourseId(courseId);
   }
@@ -81,10 +93,11 @@ export class CoursesController {
   @Put('admin/update-course')
   @UseGuards(AuthGuard)
   @Roles(Role.ADMIN)
+  @ApiSecurity('bearer')
   async updateCourse(
     @Body() updateCourseDto: UpdateCourseDto,
   ): Promise<Course> {
-    return this.coursesService.updateCourse(updateCourseDto)
+    return this.coursesService.updateCourse(updateCourseDto);
   }
 
   // PUT ~/api/courses/admin/update-lesson
@@ -92,30 +105,29 @@ export class CoursesController {
   @Put('instructor/update-lesson')
   @UseGuards(AuthGuard)
   @Roles(Role.ADMIN, Role.INSTRUCTOR)
+  @ApiSecurity('bearer')
   async updateLesson(
     @Body() updateLessonDto: UpdateLessonDto,
   ): Promise<Lesson> {
-    return this.lessonsService.updateLesson(updateLessonDto)
+    return this.lessonsService.updateLesson(updateLessonDto);
   }
 
   @Delete('admin/delete-course/:courseId')
   @UseGuards(AuthGuard)
   @Roles(Role.ADMIN)
-  async deleteCourse(
-    @Param('courseId') courseId: number,
-  ) {
+  @ApiSecurity('bearer')
+  async deleteCourse(@Param('courseId') courseId: number) {
     return this.coursesService.deleteCourse(courseId);
   }
-  
+
   // DELETE ~/api/courses/admin/delete-lesson/:lessonId
   // DELETE ~/api/courses/instructor/delete-lesson/:lessonId
   @Delete('admin/delete-lesson/:lessonId')
   @Delete('instructor/delete-lesson/:lessonId')
   @UseGuards(AuthGuard)
   @Roles(Role.ADMIN, Role.INSTRUCTOR)
-  async deleteLesson(
-    @Param('lessonId') lessonId: number,
-  ) {
+  @ApiSecurity('bearer')
+  async deleteLesson(@Param('lessonId') lessonId: number) {
     return this.lessonsService.deleteLesson(lessonId);
   }
 
@@ -125,10 +137,14 @@ export class CoursesController {
   @Post('instructor/add-assignment')
   @UseGuards(AuthGuard)
   @Roles(Role.ADMIN, Role.INSTRUCTOR)
+  @ApiSecurity('bearer')
   async addAssignmentToCourse(
     @Body() assignmentDto: CreateAssignmentDto,
     @CurrentUser() payload: types.JWTPayloadType,
   ) {
-    return this.assignmentsService.addAssignmentToCourse(assignmentDto, payload.id);
+    return this.assignmentsService.addAssignmentToCourse(
+      assignmentDto,
+      payload.id,
+    );
   }
 }

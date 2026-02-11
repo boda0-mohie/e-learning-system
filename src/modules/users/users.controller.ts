@@ -20,6 +20,7 @@ import { Role } from "utils/enum";
 import { Roles } from "./decorators/user-role.decorator";
 import { request } from "https";
 import { UpdateRoleDto } from "./dtos/update-role.dto";
+import { ApiSecurity } from "@nestjs/swagger";
 
 
 @Controller('api/users')
@@ -43,6 +44,7 @@ export class UsersController {
   // GET ~/api/users/current-user
   @Get('current-user')
   @UseGuards(AuthGuard)
+  @ApiSecurity("bearer")
   public getCurrentUser(@Req() request: any) {
     const payload = request.user;
     return this.usersService.getCurrentUser(payload.id)
@@ -52,6 +54,7 @@ export class UsersController {
   @Get()
   @Roles(Role.ADMIN)
   @UseGuards(AuthRolesGuard)
+  @ApiSecurity("bearer")
   public async getAllUsers() {
     return this.usersService.getAllUsers();
   }
@@ -60,6 +63,7 @@ export class UsersController {
   @Get(':id')
   @Roles(Role.ADMIN)
   @UseGuards(AuthRolesGuard)
+  @ApiSecurity("bearer")
   public async getUserById(@Req() request: any) {
     const userId = request.params.id;
     return this.usersService.getUserById(userId);
@@ -69,6 +73,7 @@ export class UsersController {
   @Put('update-role/:id')
   @Roles(Role.ADMIN)
   @UseGuards(AuthRolesGuard)
+  @ApiSecurity("bearer")
   public async updateUserRole(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateRoleDto) {
     return this.usersService.updateUserRole(id, body);
   }
@@ -77,6 +82,7 @@ export class UsersController {
   @Delete(':id')
   @Roles(Role.ADMIN)
   @UseGuards(AuthRolesGuard)
+  @ApiSecurity("bearer")
   public async deleteUser(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.deleteUser(id);
   }
