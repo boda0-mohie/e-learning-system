@@ -1,15 +1,24 @@
-import { IsOptional, IsString } from "class-validator";
+import { IsEnum, IsOptional, IsString } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
+import { AcademicYear, Major, Term } from "utils/enum";
 
 export class UpdateStudentProfileDto {
-    @IsString()
     @IsOptional()
-    @ApiProperty({ description: 'Student name' })
-    name?: string;
+    @IsEnum(Major)
+    @ApiProperty({ description: 'Student major' })
+    major?: Major;
 
-    @IsString()
+    @IsOptional()
+    @IsEnum(AcademicYear)
+    @ApiProperty({ description: 'Student photo' })
+    academicYear?: AcademicYear;
+
+    @IsOptional()
+    @IsEnum(Term)
+    @ApiProperty({ description: 'Student photo' })
+    term?: Term;
+
     @IsOptional()
     @ApiProperty({ description: 'Student photo' })
-    photo?: string;
-
+    gpa?: number;
 }

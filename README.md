@@ -80,7 +80,7 @@ JWT_SECRET=your_super_secret_key
 
 ---
 
-## 📥 Installation
+## Installation
 
 1. **Clone the repository**
    ```bash
@@ -95,7 +95,7 @@ JWT_SECRET=your_super_secret_key
 
 ---
 
-## ▶️ Running the Application
+## Running the Application
 
 1. **Development Mode**
    ```bash
