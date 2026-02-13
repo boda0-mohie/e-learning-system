@@ -11,9 +11,7 @@ export class EnrollmentService {
   constructor(
     @InjectRepository(Enrollment)
     private readonly enrollmentRepository: Repository<Enrollment>,
-    @Inject(forwardRef(() => CoursesService))
     private readonly coursesService: CoursesService,
-    @Inject(forwardRef(() => StudentProfileService))
     private readonly studentProfileService: StudentProfileService,
   ) { }
 
@@ -61,6 +59,7 @@ export class EnrollmentService {
       where: {
         profile: { id: profileId },
       },
+      relations: ['course', 'profile'],
     });
     if (!enrollments) {
       throw new NotFoundException('No enrollments found');

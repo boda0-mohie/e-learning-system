@@ -62,6 +62,9 @@ export class CoursesController {
 
   // GET ~/api/courses
   @Get()
+  @UseGuards(AuthGuard)
+  @Roles(Role.ADMIN, Role.INSTRUCTOR)
+  @ApiSecurity('bearer')
   async getAllCourses(): Promise<Course[]> {
     return this.coursesService.getAllCourses();
   }

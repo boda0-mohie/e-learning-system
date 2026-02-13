@@ -2,18 +2,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { StudentProfile } from './entities/studentPofile.entity';
 import { Repository } from 'typeorm';
 import { CreateStudentProfileDto } from './dtos/create-studentProfile.dto';
-import { Role } from 'utils/enum';
-import { User } from 'src/modules/users/entities/user.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateStudentProfileDto } from './dtos/update-studenProfile.dto';
+import { UsersService } from 'src/modules/users/users.service';
 
 @Injectable()
 export class StudentProfileService {
   constructor(
     @InjectRepository(StudentProfile)
     private readonly studentProfileRepository: Repository<StudentProfile>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userService: UsersService,
   ) {}
 
   /**
@@ -26,10 +24,7 @@ export class StudentProfileService {
     userId: number,
     createStudentProfileDto: CreateStudentProfileDto,
   ): Promise<StudentProfile> {
-    const user = await this.userRepository.findOneBy({ id: userId });
-    if (!user || user.role !== Role.STUDENT) {
-      throw new Error('User not found');
-    }
+    const user = await this.userService.getUserById(userId);
     const studentProfile = this.studentProfileRepository.create({
       ...createStudentProfileDto,
       user,
@@ -43,19 +38,12 @@ export class StudentProfileService {
    * @returns student profile
    */
   public async getStudentProfile(userId: number): Promise<StudentProfile> {
-    const user = await this.userRepository.findOneBy({ id: userId });
-    if (!user || user.role !== Role.STUDENT) {
-      throw new NotFoundException('User not found');
-    }
+    const user = await this.userService.getUserById(userId);
     const profile = await this.studentProfileRepository.findOne({
       where: { id: user.id },
       relations: {
-        user: true,
         enrollments: {
-          course: {
-            lessons: true,
-            assignments: true,
-          },
+          course: true,
         },
       },
     });
@@ -75,19 +63,13 @@ export class StudentProfileService {
     userId: number,
     updateStudentProfileDto: UpdateStudentProfileDto,
   ): Promise<StudentProfile> {
-    const user = await this.userRepository.findOneBy({ id: userId });
-    if (!user || user.role !== Role.STUDENT) {
-      throw new Error('User not found');
-    }
-    const profile = await this.studentProfileRepository.findOneBy({ id: user.id });
-    if (!profile) {
-      throw new NotFoundException('Profile not found');
-    }
-
-    profile.major = updateStudentProfileDto.major ?? profile.major;
-    profile.academicYear = updateStudentProfileDto.academicYear ?? profile.academicYear;
-    profile.term = updateStudentProfileDto.term ?? profile.term;
-    profile.gpa = updateStudentProfileDto.gpa ?? profile.gpa;
+    const user = await this.userService.getUserById(userId);
+    const profile = await this.getStudentProfile(user.id);
+    const { major, academicYear, term, gpa } = updateStudentProfileDto;
+    profile.major = major ?? profile.major;
+    profile.academicYear = academicYear ?? profile.academicYear;
+    profile.term = term ?? profile.term;
+    profile.gpa = gpa ?? profile.gpa;
     return this.studentProfileRepository.save(profile);
   }
 
@@ -97,14 +79,8 @@ export class StudentProfileService {
    * @returns deleted student profile
    */
   public async deleteStudentProfile(userId: number): Promise<StudentProfile> {
-    const user = await this.userRepository.findOneBy({ id: userId });
-    if (!user || user.role !== Role.STUDENT) {
-      throw new Error('User not found');
-    }
-    const profile = await this.studentProfileRepository.findOneBy({ id: user.id });
-    if (!profile) {
-      throw new NotFoundException('Profile not found');
-    }
+    const user = await this.userService.getUserById(userId);
+    const profile = await this.getStudentProfile(user.id);
     return this.studentProfileRepository.remove(profile);
   }
 }

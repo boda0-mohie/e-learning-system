@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterDto } from './dtos/register.dto';
 import { Repository } from 'typeorm';
@@ -15,7 +19,7 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private readonly jwtService: JwtService,
-  ) { }
+  ) {}
 
   /**
    * Register a new user
@@ -40,7 +44,10 @@ export class UsersService {
 
     newUser = await this.usersRepository.save(newUser);
 
-    const accessToken = await this.generateJWT({ id: newUser.id, userType: newUser.role });
+    const accessToken = await this.generateJWT({
+      id: newUser.id,
+      userType: newUser.role,
+    });
 
     return { accessToken };
   }
@@ -56,13 +63,19 @@ export class UsersService {
     if (!userFromDb) {
       throw new BadRequestException('Invalid credentials');
     }
-    const isPasswordMatching = await bcrypt.compare(password, userFromDb.password);
+    const isPasswordMatching = await bcrypt.compare(
+      password,
+      userFromDb.password,
+    );
     if (!isPasswordMatching) {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const accessToken = await this.generateJWT({ id: userFromDb.id, userType: userFromDb.role });
-    
+    const accessToken = await this.generateJWT({
+      id: userFromDb.id,
+      userType: userFromDb.role,
+    });
+
     return { accessToken };
   }
 
@@ -72,9 +85,9 @@ export class UsersService {
    * @returns The User From The Database
    */
   public async getCurrentUser(id: number): Promise<User> {
-    const user = await this.usersRepository.findOne({ where: { id } })
-    if (!user) throw new NotFoundException("User Not Found")
-    return user
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('User Not Found');
+    return user;
   }
 
   /**
@@ -82,7 +95,7 @@ export class UsersService {
    * @returns List of users
    */
   public async getAllUsers(): Promise<User[]> {
-    return this.usersRepository.find()
+    return this.usersRepository.find();
   }
 
   /**
@@ -91,9 +104,9 @@ export class UsersService {
    * @returns user
    */
   public async getUserById(id: number): Promise<User> {
-    const user =  await this.usersRepository.findOne({ where: { id } })
-    if (!user) throw new NotFoundException("User Not Found")
-    return user
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('User Not Found');
+    return user;
   }
 
   /**
@@ -103,10 +116,10 @@ export class UsersService {
    * @returns updated user
    */
   public async updateUserRole(id: number, role: UpdateRoleDto): Promise<User> {
-    const user =  await this.usersRepository.findOne({ where: { id } })
-    if (!user) throw new NotFoundException("User Not Found")
-    user.role = role.role
-    return this.usersRepository.save(user)
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('User Not Found');
+    user.role = role.role;
+    return this.usersRepository.save(user);
   }
 
   /**
@@ -114,20 +127,20 @@ export class UsersService {
    * @param id of user
    */
   public async deleteUser(id: number): Promise<{ message: string }> {
-    const user =  await this.usersRepository.findOne({ where: { id } })
-    if (!user) throw new NotFoundException("User Not Found")
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('User Not Found');
     await this.usersRepository.delete(id);
     return {
-      message : 'User deleted successfully'
-    }
+      message: 'User deleted successfully',
+    };
   }
 
   /**
-     * Generate Web Token
-     * @param payload JWT payload
-     * @returns token
-     */
+   * Generate Web Token
+   * @param payload JWT payload
+   * @returns token
+   */
   private generateJWT(payload: JWTPayloadType): Promise<string> {
-    return this.jwtService.signAsync(payload)
+    return this.jwtService.signAsync(payload);
   }
 }

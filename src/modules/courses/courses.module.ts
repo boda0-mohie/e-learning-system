@@ -9,12 +9,15 @@ import { UsersModule } from '../users/users.module';
 import { EnrollmentModule } from '../enrollments/enrollments.module';
 import { Assignment } from './entities/assignment.entity';
 import { AssignmentsService } from './assignmets.service';
+import { forwardRef } from '@nestjs/common';
+import { StudentProfileModule } from '../profiles/studentProfile/studentProfile.module';
 
 @Module({
   imports: [
     UsersModule,
+    forwardRef(() => EnrollmentModule),
+    forwardRef(() => StudentProfileModule),
     TypeOrmModule.forFeature([Course, Lesson, Assignment]),
-    EnrollmentModule,
   ],
   providers: [CoursesService, LessonsService, AssignmentsService],
   controllers: [CoursesController],
