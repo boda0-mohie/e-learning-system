@@ -20,7 +20,7 @@ export class Enrollment {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'student_id' })
-  profile: StudentProfile| number;
+  profile: StudentProfile;
 
   @ManyToOne(() => Course, course => course.enrollments, {
     onDelete: 'CASCADE',

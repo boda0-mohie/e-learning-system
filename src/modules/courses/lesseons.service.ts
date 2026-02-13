@@ -3,10 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Course } from './entities/course.entity';
 import { Lesson } from './entities/lesson.entity';
-import { User } from '../users/entities/user.entity';
 import { Role } from 'utils/enum';
 import { CreateLessonDto } from './dtos/create-lesson.dto';
 import { UpdateLessonDto } from './dtos/update-lesson.dto';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class LessonsService {
@@ -15,8 +15,7 @@ export class LessonsService {
     private coursesRepository: Repository<Course>,
     @InjectRepository(Lesson)
     private lessonsRepository: Repository<Lesson>,
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private readonly usersService: UsersService,
   ) { }
 
   /**
@@ -26,15 +25,15 @@ export class LessonsService {
    */
   public async addLesson(lessonDto: CreateLessonDto, creatorId: number) {
     const { courseId, title, content, videoUrl, duration } = lessonDto;
-    const creator = await this.usersRepository.findOneBy({ id: creatorId });
+    const creator = await this.usersService.getUserById(creatorId);
 
     if (!creator || (creator.role !== Role.INSTRUCTOR && creator.role !== Role.ADMIN)) {
-      throw new Error('Creator not found or not an instructor');
+      throw new NotFoundException('Creator not found or not an instructor');
     }
 
     const course = await this.coursesRepository.findOneBy({ id: courseId });
     if (!course) {
-      throw new Error('Course not found');
+      throw new NotFoundException('Course not found');
     }
 
     const lessonsCount = await this.lessonsRepository.count({
@@ -52,7 +51,6 @@ export class LessonsService {
       lessonOrder: lessonsCount + 1,
       course: course,
     });
-
     await this.lessonsRepository.save(lesson);
     await this.coursesRepository.save(course);
     return {

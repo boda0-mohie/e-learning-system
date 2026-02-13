@@ -29,7 +29,17 @@ export class EnrollmentController {
   @ApiSecurity('bearer')
   public async getMyEnrollments(
     @CurrentUser() payload: types.JWTPayloadType,
-  ): Promise<Enrollment[]> {
+  ) {
     return this.enrollmentService.getMyEnrollments(payload.id);
+  }
+
+  @Get('/:courseId/students')
+  @UseGuards(AuthGuard)
+  @Roles(Role.INSTRUCTOR, Role.ADMIN)
+  @ApiSecurity('bearer')
+  public async getStudentsByCourseId(
+    @Param('courseId') courseId: number,
+  ) {
+    return this.enrollmentService.getStudentsByCourseId(courseId);
   }
 }

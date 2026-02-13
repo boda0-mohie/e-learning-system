@@ -39,13 +39,6 @@ export class StudentProfile {
     })
     gpa: number;
 
-    @Column({
-        type: 'varchar',
-        length: 255,
-        nullable: true,
-    })
-    photo: string;
-
     @OneToMany(() => Enrollment, enrollment => enrollment.profile)
     enrollments: Enrollment[];
 }

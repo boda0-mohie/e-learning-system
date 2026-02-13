@@ -60,13 +60,12 @@ export class UsersController {
   }
 
   // GET ~/api/users/:id
-  @Get(':id')
+  @Get('/:id')
   @Roles(Role.ADMIN)
   @UseGuards(AuthRolesGuard)
   @ApiSecurity("bearer")
-  public async getUserById(@Req() request: any) {
-    const userId = request.params.id;
-    return this.usersService.getUserById(userId);
+  public async getUserById(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.getUserById(id);
   }
 
   // PUT ~/api/users/:id

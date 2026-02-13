@@ -6,6 +6,8 @@ import { CreateAssignmentDto } from "./dtos/create-assignment.dto";
 import { UsersService } from "../users/users.service";
 import { Role } from "utils/enum";
 import { CoursesService } from "./courses.service";
+import { EmailService } from "../mail/mail.service";
+import { EnrollmentService } from "../enrollments/enrollments.service";
 
 @Injectable()
 export class AssignmentsService {
@@ -13,7 +15,10 @@ export class AssignmentsService {
     @InjectRepository(Assignment)
     private readonly assignmentsRepository: Repository<Assignment>,
     private readonly usersService: UsersService,
+    private readonly emailService: EmailService,
+    private readonly enrollmentsService: EnrollmentService,
     private readonly coursesService: CoursesService,
+    
   ) { }
 
   /**
@@ -28,6 +33,7 @@ export class AssignmentsService {
     if (course.instructorId !== creatorId && creator.role !== Role.ADMIN) {
       throw new BadRequestException('User is not authorized to create assignment');
     }
+    const profiles = await this.enrollmentsService.getStudentsByCourseId(assignmentDto.courseId);
     const newAssignment = this.assignmentsRepository.create({
       title: assignmentDto.title,
       description: assignmentDto.description,
@@ -36,6 +42,11 @@ export class AssignmentsService {
       course_id: assignmentDto.courseId,
       creator_id: creatorId,
     });
+    Promise.all(
+      profiles.map((profile) => {
+        this.emailService.sendNewAssignmentEmail(profile);
+      })
+    )
     return this.assignmentsRepository.save(newAssignment);
   }
 }

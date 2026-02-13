@@ -54,7 +54,7 @@ export class EnrollmentService {
    * @param profileId Id of the student profile
    * @returns List of enrollments
    */
-  public async getMyEnrollments(profileId: number): Promise<Enrollment[]> {
+  public async getMyEnrollments(profileId: number) {
     const enrollments = await this.enrollmentRepository.find({
       where: {
         profile: { id: profileId },
@@ -64,6 +64,26 @@ export class EnrollmentService {
     if (!enrollments) {
       throw new NotFoundException('No enrollments found');
     }
-    return enrollments;
+    return {
+      courses: enrollments.map((enrollment) => enrollment.course),
+    }
+  }
+
+  /**
+   * Get Students by Course Id
+   * @param courseId Id of the course
+   * @returns List of students
+   */
+  public async getStudentsByCourseId(courseId: number) {
+    const enrollments = await this.enrollmentRepository.find({
+      where: {
+        course: { id: courseId },
+      },
+      relations: ['course', 'profile', 'profile.user'],
+    });
+    if (!enrollments) {
+      throw new NotFoundException('No enrollments found');
+    }
+    return enrollments.map((enrollment) => enrollment.profile.user);
   }
 }
