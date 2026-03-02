@@ -143,6 +143,51 @@ Each module typically contains:
 
 ---
 
+## Database Design & Relationships
+
+### Relationships
+
+- **Users**
+  - Can have one **Student Profile** (if role = `STUDENT`).
+  - Can create multiple **Courses** (as `INSTRUCTOR`).
+  - Can manage multiple **Courses** (as `ADMIN`).
+  - Can create multiple **Lessons** and **Assignments**.
+
+- **Student Profiles**
+  - Belong to exactly one **User** (One-to-One relationship).
+  - Can enroll in multiple **Courses** through **Enrollments**.
+
+- **Courses**
+  - Belong to one **Instructor** (`User`).
+  - Belong to one **Admin** (`User`).
+  - Can contain multiple **Lessons** (One-to-Many).
+  - Can contain multiple **Assignments** (One-to-Many).
+  - Can have multiple enrolled **Students** via **Enrollments**.
+
+- **Enrollments**
+  - Belong to one **Student Profile** (Many-to-One).
+  - Belong to one **Course** (Many-to-One).
+  - Track enrollment `status` and `enrolled_at` timestamp.
+  - Prevent duplicate enrollments using a composite unique constraint (`student_id`, `course_id`).
+
+- **Lessons**
+  - Belong to one **Course** (Many-to-One).
+  - Created by one **User**.
+
+- **Assignments**
+  - Belong to one **Course** (Many-to-One).
+  - Created by one **User**.
+
+---
+
+### Entity Relationship Diagram (ERD)
+
+The following diagram represents the relational database structure of the system:
+
+![Database ERD](./docs/e-learning-system-edr.png)
+
+---
+
 ## Module Relations
 
 The system is built around interconnected modules that define the platform's core functionality:
